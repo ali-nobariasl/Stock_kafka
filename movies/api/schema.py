@@ -1,13 +1,12 @@
-
-
-
-
 import graphene
 from graphene_django.types import DjangoObjectType
 from .models import Movie , Dicrector
 import graphql_jwt
 from graphql_jwt.shortcuts import get_token, get_user_by_token
 from graphql_jwt.decorators import login_required
+from graphene import relay
+from graphene_django.filter import DjangoFilterConnectionField
+
 class MovieType(DjangoObjectType):
     class Meta:
         model = Movie
@@ -23,8 +22,16 @@ class DicrectorType(DjangoObjectType):
         model= Dicrector
 
 
+# implementing relay
+class MovieNode(DjangoObjectType):
+    class Meta:
+        model = Movie
+        filter_fields = ['title','year']
+        interfaces = (relay.Node, )
+
 class Query(graphene.ObjectType):
-    all_movies = graphene.List(MovieType)
+    #all_movies = graphene.List(MovieType)
+    all_movies = DjangoFilterConnectionField(MovieNode)
     movie = graphene.Field(MovieType, id = graphene.Int(), title = graphene.String())
 
     # should have resolve_'name of attributes' function for each attribute
