@@ -32,8 +32,10 @@ class MovieNode(DjangoObjectType):
 class Query(graphene.ObjectType):
     #all_movies = graphene.List(MovieType)
     all_movies = DjangoFilterConnectionField(MovieNode)
-    movie = graphene.Field(MovieType, id = graphene.Int(), title = graphene.String())
+    #movie = graphene.Field(MovieType, id = graphene.Int(), title = graphene.String())
+    movie = relay.Node.Field(MovieNode)
 
+    '''
     # should have resolve_'name of attributes' function for each attribute
     def resolve_movie(self,info,**kwargs):
         id = kwargs.get('id')
@@ -43,6 +45,7 @@ class Query(graphene.ObjectType):
         if title is not None:
             return Movie.objects.get(title=title)
         return None
+    '''
 
     # should have resolve_'name of attributes' function for each attribute    
     @login_required
