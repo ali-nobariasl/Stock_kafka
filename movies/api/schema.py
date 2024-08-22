@@ -26,7 +26,10 @@ class DicrectorType(DjangoObjectType):
 class MovieNode(DjangoObjectType):
     class Meta:
         model = Movie
-        filter_fields = ['title','year']
+        filter_fields = {
+            'title': ['exact', 'icontains', 'istartswith'],
+            'year': ['exact',]
+        }
         interfaces = (relay.Node, )
 
 class Query(graphene.ObjectType):
