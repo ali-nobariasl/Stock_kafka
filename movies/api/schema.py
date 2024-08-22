@@ -5,7 +5,9 @@
 import graphene
 from graphene_django.types import DjangoObjectType
 from .models import Movie , Dicrector
-
+import graphql_jwt
+from graphql_jwt.shortcuts import get_token, get_user_by_token
+from graphql_jwt.decorators import login_required
 class MovieType(DjangoObjectType):
     class Meta:
         model = Movie
@@ -36,6 +38,7 @@ class Query(graphene.ObjectType):
         return None
 
     # should have resolve_'name of attributes' function for each attribute    
+    @login_required
     def resolve_all_movies(self, info, **kwargs):
         return Movie.objects.all()
     
@@ -95,6 +98,9 @@ class MovieDeleteMutation(graphene.Mutation):
         return MovieUpdateMutation(movie=None)
 
 class Mutation:
+    # this token type use username and password for authentication
+    token_auth = graphql_jwt.ObtainJSONWebToken.Field()
+
     create_movie = MovieCreateMutation.Field()
     update_movie = MovieUpdateMutation.Field()
     delete_movie = MovieDeleteMutation.Field()
