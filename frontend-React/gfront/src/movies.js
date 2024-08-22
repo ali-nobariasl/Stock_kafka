@@ -1,5 +1,6 @@
 
 import React from 'react';
+import { gql, useQuery } from '@apollo/client';
 
 
 
@@ -9,8 +10,18 @@ import React from 'react';
 
 
 
-
-
+const GET_MOVIES = gql`
+{
+    allMovies{
+        edges{
+            node{
+                id
+                title
+                year
+            }
+        }
+    }
+}`
 
 
 
@@ -21,14 +32,18 @@ import React from 'react';
 
 function Movies(){
 
-    const movies = [];
+    const { loading, error, data}= useQuery(GET_MOVIES);
+    if (loading) return 'Loading...';
+    if (error) return 'Error.${error.message}';
+
+    const movies = data.allMovies.edges;
 
     return(
         <div>
             <h1>List of movies</h1>
             {
                 movies.map(movie =>{
-                    return <h2 key={movie.id}> {movie.title} </h2>
+                    return <h2 key={movie.node.id}> {movie.node.title} </h2>
                 })
             }
         </div>
